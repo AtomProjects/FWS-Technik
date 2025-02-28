@@ -13,7 +13,8 @@ export type SortOption =
   | "date-oldest"
   | "price-lowest"
   | "price-highest"
-  | "priority";
+  | "priority"
+  | "date";
 
 export type EditableShoppingItemFields = Pick<
   ShoppingItem,
