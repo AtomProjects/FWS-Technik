@@ -22,12 +22,12 @@ export async function fetchShoppingItems(sortBy: SortOption = "date") {
       break;
     case "price-lowest":
       query = query
-        .order("price", { ascending: true, nullsLast: true })
+        .order("price", { ascending: true })
         .order("created_at", { ascending: false });
       break;
     case "price-highest":
       query = query
-        .order("price", { ascending: false, nullsLast: true })
+        .order("price", { ascending: false })
         .order("created_at", { ascending: false });
       break;
   }
