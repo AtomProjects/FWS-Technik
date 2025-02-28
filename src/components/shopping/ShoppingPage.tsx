@@ -158,12 +158,12 @@ export default function ShoppingPage() {
       <Card className="max-w-4xl mx-auto p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-6">
           <h1 className="text-3xl font-bold">Einkaufsliste</h1>
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <Select
               value={sortBy}
               onValueChange={(value) => setSortBy(value as SortOption)}
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full sm:w-[180px]">
                 <SelectValue placeholder="Sortieren nach" />
               </SelectTrigger>
               <SelectContent>
@@ -182,7 +182,10 @@ export default function ShoppingPage() {
                 </SelectItem>
               </SelectContent>
             </Select>
-            <Button onClick={() => setIsAddDialogOpen(true)}>
+            <Button
+              onClick={() => setIsAddDialogOpen(true)}
+              className="w-full sm:w-auto"
+            >
               <Plus className="w-4 h-4 mr-2" />
               Artikel hinzufügen
             </Button>
@@ -193,7 +196,7 @@ export default function ShoppingPage() {
           {items.map((item) => (
             <div
               key={item.id}
-              className="flex items-center justify-between p-4 rounded-lg border bg-card text-card-foreground shadow-sm hover:bg-muted/50 cursor-pointer transition-colors"
+              className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-lg border bg-card text-card-foreground shadow-sm hover:bg-muted/50 cursor-pointer transition-colors"
               onClick={() => setSelectedItemForNotes(item)}
             >
               <div className="space-y-1">
@@ -202,6 +205,11 @@ export default function ShoppingPage() {
                   <span className={PRIORITY_LABELS[item.priority].class}>
                     ({PRIORITY_LABELS[item.priority].label})
                   </span>
+                  {item.price && (
+                    <span className="text-sm font-medium ml-auto sm:hidden">
+                      {item.price.toFixed(2)} €
+                    </span>
+                  )}
                 </div>
                 <p className="text-sm text-muted-foreground">
                   Hinzugefügt von {item.created_by} am{" "}
@@ -209,11 +217,11 @@ export default function ShoppingPage() {
                 </p>
               </div>
               <div
-                className="flex items-center gap-4"
+                className="flex items-center gap-2 mt-2 sm:mt-0 justify-end"
                 onClick={(e) => e.stopPropagation()}
               >
                 {item.price && (
-                  <span className="text-sm font-medium">
+                  <span className="text-sm font-medium hidden sm:inline mr-2">
                     {item.price.toFixed(2)} €
                   </span>
                 )}
@@ -231,6 +239,7 @@ export default function ShoppingPage() {
                   variant="ghost"
                   size="icon"
                   onClick={() => setSelectedItemForEdit(item)}
+                  className="h-8 w-8"
                 >
                   <Edit className="h-4 w-4" />
                 </Button>
@@ -238,7 +247,7 @@ export default function ShoppingPage() {
                   variant="ghost"
                   size="icon"
                   onClick={() => handleDeleteItem(item.id)}
-                  className="text-destructive hover:text-destructive"
+                  className="text-destructive hover:text-destructive h-8 w-8"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -253,7 +262,7 @@ export default function ShoppingPage() {
         </div>
 
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogContent>
+          <DialogContent className="max-w-[95vw] sm:max-w-lg w-full max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Artikel hinzufügen</DialogTitle>
             </DialogHeader>
@@ -269,15 +278,19 @@ export default function ShoppingPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="price">Preis (optional)</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={newItemPrice}
-                  onChange={(e) => setNewItemPrice(e.target.value)}
-                  placeholder="0.00"
-                />
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="price"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={newItemPrice}
+                    onChange={(e) => setNewItemPrice(e.target.value)}
+                    placeholder="0.00"
+                    className="text-right"
+                  />
+                  <span className="text-muted-foreground">€</span>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="link">Link (optional)</Label>
@@ -305,15 +318,18 @@ export default function ShoppingPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex justify-end space-x-2">
+              <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:space-x-2">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setIsAddDialogOpen(false)}
+                  className="w-full sm:w-auto"
                 >
                   Abbrechen
                 </Button>
-                <Button type="submit">Hinzufügen</Button>
+                <Button type="submit" className="w-full sm:w-auto">
+                  Hinzufügen
+                </Button>
               </div>
             </form>
           </DialogContent>

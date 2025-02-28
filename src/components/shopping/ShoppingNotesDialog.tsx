@@ -96,7 +96,7 @@ export default function ShoppingNotesDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[95vw] sm:max-w-2xl">
+      <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Notizen - {item.name}</DialogTitle>
         </DialogHeader>
@@ -142,15 +142,20 @@ export default function ShoppingNotesDialog({
               onChange={(e) => setNewNote(e.target.value)}
               className="min-h-[100px]"
             />
-            <div className="flex justify-end space-x-2">
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:space-x-2">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
+                className="w-full sm:w-auto"
               >
                 Schließen
               </Button>
-              <Button type="submit" disabled={!newNote.trim()}>
+              <Button
+                type="submit"
+                disabled={!newNote.trim()}
+                className="w-full sm:w-auto"
+              >
                 Notiz hinzufügen
               </Button>
             </div>
