@@ -57,7 +57,7 @@ export default function NewEventDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-w-[95vw] sm:max-w-lg w-full max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Neue Veranstaltung</DialogTitle>
         </DialogHeader>
@@ -131,15 +131,18 @@ export default function NewEventDialog({
               />
             </div>
           )}
-          <div className="flex justify-end space-x-2">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:space-x-2">
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
+              className="w-full sm:w-auto"
             >
               Abbrechen
             </Button>
-            <Button type="submit">Speichern</Button>
+            <Button type="submit" className="w-full sm:w-auto">
+              Speichern
+            </Button>
           </div>
         </form>
       </DialogContent>
