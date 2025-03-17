@@ -61,6 +61,7 @@ export default function EventsList({
               </TableCell>
               <TableCell className="whitespace-nowrap">
                 {new Date(event.date).toLocaleDateString("de-DE")}
+                {event.time && <span className="ml-2">{event.time} Uhr</span>}
               </TableCell>
               <TableCell className="whitespace-nowrap">
                 {event.location}
