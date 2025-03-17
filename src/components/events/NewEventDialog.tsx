@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -29,11 +29,25 @@ export default function NewEventDialog({
   const [name, setName] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  const [location, setLocation] = useState("");
+  const [location, setLocation] = useState("Aula"); // Default to "Aula"
   const [mainContact, setMainContact] = useState("");
   const [contactInfo, setContactInfo] = useState("");
   const [addNote, setAddNote] = useState(false);
   const [note, setNote] = useState("");
+
+  // Reset form when dialog opens
+  useEffect(() => {
+    if (open) {
+      setName("");
+      setDate("");
+      setTime("");
+      setLocation("Aula"); // Reset to "Aula" when dialog opens
+      setMainContact("");
+      setContactInfo("");
+      setAddNote(false);
+      setNote("");
+    }
+  }, [open]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,14 +62,7 @@ export default function NewEventDialog({
       },
       addNote ? note : undefined,
     );
-    setName("");
-    setDate("");
-    setTime("");
-    setLocation("");
-    setMainContact("");
-    setContactInfo("");
-    setAddNote(false);
-    setNote("");
+    // Form reset is now handled in the useEffect
   };
 
   return (

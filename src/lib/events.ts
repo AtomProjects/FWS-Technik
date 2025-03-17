@@ -19,15 +19,49 @@ function mapDbEventToEvent(dbEvent: DbEvent): Event {
 }
 
 export async function fetchEvents() {
-  const { data, error } = await supabase
-    .from("events")
-    .select("*")
-    .order("date", { ascending: true });
+  // First, fetch all events
+  const { data, error } = await supabase.from("events").select("*");
 
   if (error) throw error;
   if (!data) return [];
 
-  return data.map(mapDbEventToEvent);
+  // Map database events to our Event type
+  const mappedEvents = data.map(mapDbEventToEvent);
+
+  // Sort events by date and time
+  return mappedEvents.sort((a, b) => {
+    // First compare by date
+    const dateComparison =
+      new Date(a.date).getTime() - new Date(b.date).getTime();
+
+    // If dates are different, just return the date comparison
+    if (dateComparison !== 0) {
+      return dateComparison;
+    }
+
+    // If dates are the same, compare by time
+    if (a.time && b.time) {
+      // Convert time strings to comparable values (assuming format like "14:30")
+      const aTime = a.time.split(":").map(Number);
+      const bTime = b.time.split(":").map(Number);
+
+      // Compare hours first
+      if (aTime[0] !== bTime[0]) {
+        return aTime[0] - bTime[0];
+      }
+
+      // If hours are the same, compare minutes
+      return aTime[1] - bTime[1];
+    }
+
+    // If one event has time and the other doesn't (and they have the same date),
+    // prioritize the one with time
+    if (a.time && !b.time) return -1;
+    if (!a.time && b.time) return 1;
+
+    // If both events don't have time and have the same date, they're equal
+    return 0;
+  });
 }
 
 export async function createEvent(
