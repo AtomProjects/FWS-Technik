@@ -10,6 +10,7 @@ function mapDbEventToEvent(dbEvent: DbEvent): Event {
     id: dbEvent.id,
     name: dbEvent.name,
     date: dbEvent.date,
+    time: dbEvent.time || undefined,
     location: dbEvent.location,
     contactPersons: dbEvent.contact_persons || [],
     mainContact: dbEvent.main_contact || undefined,
@@ -37,6 +38,7 @@ export async function createEvent(
     .insert({
       name: event.name,
       date: event.date,
+      time: event.time,
       location: event.location,
       contact_persons: [],
       main_contact: event.mainContact,

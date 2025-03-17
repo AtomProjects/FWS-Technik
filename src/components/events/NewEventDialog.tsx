@@ -28,6 +28,7 @@ export default function NewEventDialog({
 }: NewEventDialogProps) {
   const [name, setName] = useState("");
   const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
   const [location, setLocation] = useState("");
   const [mainContact, setMainContact] = useState("");
   const [contactInfo, setContactInfo] = useState("");
@@ -40,6 +41,7 @@ export default function NewEventDialog({
       {
         name,
         date,
+        time,
         location,
         mainContact,
         contactInfo,
@@ -48,6 +50,7 @@ export default function NewEventDialog({
     );
     setName("");
     setDate("");
+    setTime("");
     setLocation("");
     setMainContact("");
     setContactInfo("");
@@ -79,6 +82,15 @@ export default function NewEventDialog({
               value={date}
               onChange={(e) => setDate(e.target.value)}
               required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="time">Uhrzeit</Label>
+            <Input
+              id="time"
+              type="time"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
             />
           </div>
           <div className="space-y-2">
