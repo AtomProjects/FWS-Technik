@@ -17,7 +17,16 @@ interface AssignResponsibilityDialogProps {
   onAssign: (eventId: string, contactPersons: string[]) => void;
 }
 
-const AVAILABLE_USERS = ["Jakob", "Michel", "Ben", "Erik", "Lotta", "Matthes", "Theo", "Louis"];
+const AVAILABLE_USERS = [
+  "Jakob",
+  "Michel",
+  "Ben",
+  "Erik",
+  "Lotta",
+  "Matthes",
+  "Theo",
+  "Louis",
+];
 
 export default function AssignResponsibilityDialog({
   open,
