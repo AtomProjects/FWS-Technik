@@ -5,7 +5,6 @@ import {
   updateEventResponsibilities,
   deleteEvent,
   createEventNote,
-  // Do not import updateEvent as it doesn't exist yet
 } from "@/lib/events";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -25,12 +24,13 @@ import EventsList from "./EventsList";
 import NewEventDialog from "./NewEventDialog";
 import AssignResponsibilityDialog from "./AssignResponsibilityDialog";
 import EventNotesDialog from "./EventNotesDialog";
-import EditEventDialog from "./EditEventDialog"; // Import the EditEventDialog component
-import CalendarView from "./CalendarView";
+import CalendarView from "./integrated-CalendarView"; // Updated import to use the new calendar component
 import { Event } from "@/types/events";
 import { useAuth } from "@/contexts/AuthContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { supabase } from "@/lib/supabase"; // Import supabase directly
+
+// Import the CSS for the calendar
+import "./calendar-styles.css"; // Make sure to import the calendar styles
 
 export default function EventsPage() {
   const { user } = useAuth();
@@ -40,10 +40,6 @@ export default function EventsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("list");
-
-  // Add state for edit dialog
-  const [selectedEventForEdit, setSelectedEventForEdit] =
-    useState<Event | null>(null);
 
   useEffect(() => {
     loadEvents();
@@ -98,44 +94,10 @@ export default function EventsPage() {
     }
   };
 
-  // Add handler for updating events - using supabase directly since updateEvent doesn't exist
-  const handleUpdateEvent = async (updatedEvent: Event) => {
-    try {
-      // Directly use supabase to update the event
-      const { error } = await supabase
-        .from("events")
-        .update({
-          name: updatedEvent.name,
-          date: updatedEvent.date,
-          time: updatedEvent.time,
-          location: updatedEvent.location,
-          contact_persons: updatedEvent.contactPersons,
-          main_contact: updatedEvent.mainContact,
-          contact_info: updatedEvent.contactInfo,
-        })
-        .eq("id", updatedEvent.id);
-
-      if (error) throw error;
-
-      await loadEvents();
-      setSelectedEventForEdit(null);
-      toast({
-        title: "Erfolg",
-        description: "Die Veranstaltung wurde erfolgreich aktualisiert.",
-      });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Fehler",
-        description: "Die Veranstaltung konnte nicht aktualisiert werden.",
-      });
-    }
-  };
-
   const handleAddEvents = async (newEvents: Event[], initialNote?: string) => {
     try {
       setIsLoading(true);
-
+      
       // Create each event
       for (const eventData of newEvents) {
         const eventId = await createEvent({
@@ -146,7 +108,7 @@ export default function EventsPage() {
           mainContact: eventData.mainContact,
           contactInfo: eventData.contactInfo,
         });
-
+        
         // If there's an initial note, add it to the event
         if (initialNote && eventId) {
           await createEventNote(
@@ -156,10 +118,10 @@ export default function EventsPage() {
           );
         }
       }
-
+      
       // Reload events after creating
       await loadEvents();
-
+      
       toast({
         title: "Erfolg",
         description: `${newEvents.length} Veranstaltungen wurden erfolgreich erstellt.`,
@@ -249,7 +211,7 @@ export default function EventsPage() {
             <TabsTrigger value="list">Liste</TabsTrigger>
             <TabsTrigger value="calendar">Kalender</TabsTrigger>
           </TabsList>
-
+          
           <TabsContent value="list">
             <EventsList
               events={events}
@@ -259,12 +221,12 @@ export default function EventsPage() {
               isTeacher={isTeacher}
             />
           </TabsContent>
-
+          
           <TabsContent value="calendar">
-            <CalendarView
-              events={events}
-              onEventClick={(event) => setSelectedEventForNotes(event)}
-              onAddEvents={handleAddEvents}
+            <CalendarView 
+              events={events} 
+              onEventClick={(event) => setSelectedEventForNotes(event)} 
+              onAddEvents={handleAddEvents} 
             />
           </TabsContent>
         </Tabs>
@@ -285,10 +247,7 @@ export default function EventsPage() {
         />
       )}
 
-      <AlertDialog
-        open={!!deleteEventId}
-        onOpenChange={(open) => !open && setDeleteEventId(null)}
-      >
+      <AlertDialog open={!!deleteEventId} onOpenChange={(open) => !open && setDeleteEventId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Veranstaltung löschen</AlertDialogTitle>
@@ -311,23 +270,6 @@ export default function EventsPage() {
           open={!!selectedEventForNotes}
           onOpenChange={(open) => !open && setSelectedEventForNotes(null)}
           event={selectedEventForNotes}
-          onAssignResponsibility={handleAssignResponsibility}
-          onDeleteEvent={handleDeleteEvent}
-          onEditEvent={(event) => {
-            setSelectedEventForEdit(event);
-            setSelectedEventForNotes(null);
-          }}
-          isTeacher={isTeacher}
-        />
-      )}
-
-      {/* Add EditEventDialog component */}
-      {selectedEventForEdit && (
-        <EditEventDialog
-          open={!!selectedEventForEdit}
-          onOpenChange={(open) => !open && setSelectedEventForEdit(null)}
-          event={selectedEventForEdit}
-          onSubmit={handleUpdateEvent}
         />
       )}
     </div>
